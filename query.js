@@ -5,10 +5,8 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-
-const app = express();
-const port = 3000;
-
+const app = express()
+const port = 3000
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -44,14 +42,14 @@ app.get('/rewards', async (req, res) => {
     `;
 
   try {
-    const { rows } = await pool.query(query);
-    res.json(rows);
+    const { rows } = await pool.query(query)
+    res.json(rows)
   } catch (err) {
-    console.error('Error executing query:', err);
-    res.status(500).send('Internal Server Error');
+    console.error('Error executing query:', err)
+    res.status(500).send('Internal Server Error')
   }
-});
+})
 
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+  console.log(`Server running on http://localhost:${port}`)
+})

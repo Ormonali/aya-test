@@ -14,12 +14,10 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 })
 
-
 const createSchema = async () => {
     const schema = readFileSync('./db/schema.sql', 'utf8')
     await pool.query(schema)
 }
-
 
 const insertDataIntoDB = async (employees) => {
     for (const employee of employees) {
@@ -49,32 +47,33 @@ const insertDataIntoDB = async (employees) => {
         }
     }
 }
+
 function getRates(lines) {
-    let word = "Rates"
-    let position = lines.indexOf(word)
-    let rates = []
-    if (position === -1) {
-      console.log(`The word "${word}" was not found in the text.`)
-      return rates
-    }
-    let newText = lines.slice(position)
-    let currentRate = {}
-    newText.forEach(line => {
-        if (line.startsWith('Rate')) {
-            if (currentRate.sign){
-              rates[`${currentRate.date}-${currentRate.sign}`] = currentRate.value
-            }
-            currentRate = {}
-        } else if( line.includes(':')) {
-            const [key, value] = line.split(':').map(part => part.trim())
-            currentRate[key] = isNaN(value) ? value : Number(value)
-        }
-    })
-    if (currentRate.sign){
-      rates[`${currentRate.date}-${currentRate.sign}`] = currentRate.value
-    }
+  let word = "Rates"
+  let position = lines.indexOf(word)
+  let rates = []
+  if (position === -1) {
+    console.log(`The Rates was not found in the text.`)
     return rates
   }
+  let newText = lines.slice(position)
+  let currentRate = {}
+  newText.forEach(line => {
+      if (line.startsWith('Rate')) {
+          if (currentRate.sign){
+            rates[`${currentRate.date}-${currentRate.sign}`] = currentRate.value
+          }
+          currentRate = {}
+      } else if( line.includes(':')) {
+          const [key, value] = line.split(':').map(part => part.trim())
+          currentRate[key] = isNaN(value) ? value : Number(value)
+      }
+  })
+  if (currentRate.sign){
+    rates[`${currentRate.date}-${currentRate.sign}`] = currentRate.value
+  }
+  return rates
+}
 
 function parseDumpFile(filePath) {
     const data = readFileSync(filePath, 'utf8')
@@ -173,7 +172,7 @@ const main = async () => {
         await createSchema()
         const employees = parseDumpFile('./dump/dump.txt')
         await insertDataIntoDB(employees)
-        console.log('Data successfully imported ')
+        console.log('Data successfully imported')
     } catch (error) {
         console.error('Error importing data:', error)
     } finally {
